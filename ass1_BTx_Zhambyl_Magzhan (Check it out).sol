@@ -24,9 +24,8 @@ contract MGNToken is ERC20 {
     function burn(uint256 amount) external {
         _burn(msg.sender, amount);
     }
-
-    event TransactionInfo(address indexed sender, address indexed receiver, uint256 value, string timestamp);
-
+event TransactionInfo(address indexed sender, address indexed receiver, uint256 value, string timestamp);
+    
     function getLatestTransactionTimestamp() external view returns (string memory) {
         return toDate(block.timestamp);
     }
@@ -35,79 +34,148 @@ contract MGNToken is ERC20 {
         return _msgSender();
     }
 
-    function getTransactionReceiver() external view returns (address) {
-        // Placeholder logic, customize as per your use case
-        return address(this);
-    }
-
-    function toDate(uint256 value) internal pure returns (string memory) {
-        string memory day = uint256ToString(toDay(value));
-        string memory month = uint256ToString(toMonth(value));
-        string memory year = uint256ToString(toYear(value));
-
-        return string(abi.encodePacked(day, "/", month, "/", year));
-    }
-
-    function toYear(uint256 value) internal pure returns (uint) {
+    function toYear(uint256 value) internal pure returns (uint y) {
         uint256 secs = value / 4;
-        return 3 * secs / (365 * 24 * 60 * 60) + secs / (366 * 24 * 60 * 60) + 1971;
+        uint256 yea = 3 * secs / (365 * 24 * 60 * 60) + secs / (366 * 24 * 60 * 60) + 1971;
+        //uint256 year = secs / (60 * 60 * 24 * 365) + 1970;
+        return yea;
     }
-
-    function toDay(uint256 value) internal pure returns (uint) {
+    function toDay(uint256 value) internal pure returns (uint y) {
         uint256 year = toYear(value);
-        uint256 daysInYear = year % 4 == 0 ? 366 : 365;
+        uint256 yea = year - 1970;
         uint256 reminder = value / (60 * 60 * 24);
-        return reminder - (year - 1970) * daysInYear - 12;
+        uint256 i = 0;
+        if(year % 4 == 0) {
+            i = 365;
+        }
+        else {
+            i = 364;
+        }
+        uint256 day = reminder - (yea * i) - 12;
+        return day;
     }
-
-    function toMonth(uint256 value) internal pure returns (uint) {
+    function toMonth(uint256 value) internal pure returns (uint y) {
         uint256 year = toYear(value);
-        uint256 daysInYear = year % 4 == 0 ? 366 : 365;
+        uint256 i = 0;
+        if(year % 4 == 0) {
+            i = 366;
+        }
+        else {
+            i = 365;
+        }
         uint256 day = toDay(value);
-
-        if (day <= 31) return 1;
-        if (day <= 59 && daysInYear == 365) return 2;
-        if (day <= 60 && daysInYear == 366) return 2;
-        if (day <= 90 && daysInYear == 365) return 3;
-        if (day <= 91 && daysInYear == 366) return 3;
-        if (day <= 120 && daysInYear == 365) return 4;
-        if (day <= 121 && daysInYear == 366) return 4;
-        if (day <= 151 && daysInYear == 365) return 5;
-        if (day <= 152 && daysInYear == 366) return 5;
-        if (day <= 181 && daysInYear == 365) return 6;
-        if (day <= 182 && daysInYear == 366) return 6;
-        if (day <= 212 && daysInYear == 365) return 7;
-        if (day <= 213 && daysInYear == 366) return 7;
-        if (day <= 243 && daysInYear == 365) return 8;
-        if (day <= 244 && daysInYear == 366) return 8;
-        if (day <= 273 && daysInYear == 365) return 9;
-        if (day <= 274 && daysInYear == 366) return 9;
-        if (day <= 304 && daysInYear == 365) return 10;
-        if (day <= 305 && daysInYear == 366) return 10;
-        if (day <= 334 && daysInYear == 365) return 11;
-        if (day <= 335 && daysInYear == 366) return 11;
-        return 12;
-    }
-
-    function uint256ToString(uint256 value) internal pure returns (string memory) {
-        if (value == 0) return "0";
-
-        uint256 temp = value;
-        uint256 digits;
-
-        while (temp != 0) {
-            digits++;
-            temp /= 10;
+        uint256 month = 0;
+        if (day <= 31) {
+            month = 1;
+        }
+        else if (day <= 59 && i == 365) {
+            month = 2;
+        }
+        else if (day <= 60 && i == 366) {
+            month = 2;
         }
 
-        bytes memory buffer = new bytes(digits);
-
-        while (value != 0) {
-            digits--;
-            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
-            value /= 10;
+        else if (day <= 90 && i == 365) {
+            month = 3;
+        }
+        else if (day <= 91 && i == 366) {
+            month = 3;
         }
 
-        return string(buffer);
+        else if (day <= 120 && i == 365) {
+            month = 4;
+        }
+        else if (day <= 121 && i == 366) {
+            month = 4;
+        }
+
+        else if (day <= 151 && i == 365) {
+            month = 5;
+        }
+        else if (day <= 152 && i == 366) {
+            month = 5;
+        }
+
+        else if (day <= 181 && i == 365) {
+            month = 6;
+        }
+        else if (day <= 182 && i == 366) {
+            month = 6;
+        }
+
+        else if (day <= 212 && i == 365) {
+            month = 7;
+        }
+        else if (day <= 213 && i == 366) {
+            month = 7;
+        }
+
+        else if (day <= 243 && i == 365) {
+            month = 8;
+        }
+        else if (day <= 244 && i == 366) {
+            month = 8;
+        }
+
+        else if (day <= 273 && i == 365) {
+            month = 9;
+        }
+        else if (day <= 274 && i == 366) {
+            month = 9;
+        }
+
+        else if (day <= 304 && i == 365) {
+            month = 10;
+        }
+        else if (day <= 305 && i == 366) {
+            month = 10;
+        }
+
+        else if (day <= 334 && i == 365) {
+            month = 11;
+        }
+        else if (day <= 335 && i == 366) {
+            month = 11;
+        }
+
+        else if (day <= 365 && i == 365) {
+            month = 12;
+        }
+        else if (day <= 366 && i == 366) {
+            month = 12;
+        }
+        
+        return month;
     }
+    
+    function toDate(uint256 value) internal pure returns (string memory) {
+    string memory day = uint256ToString(toDay(value));
+    string memory month = uint256ToString(toMonth(value));
+    string memory year = uint256ToString(toYear(value));
+
+    return string(abi.encodePacked(day, "/", month, "/", year));
+}
+function uint256ToString(uint256 value) internal pure returns (string memory) {
+    if (value == 0) {
+        return "0";
+    }
+    
+    uint256 temp = value;
+    uint256 digits;
+    
+    while (temp != 0) {
+        digits++;
+        temp /= 10;
+    }
+    
+    bytes memory buffer = new bytes(digits);
+    
+    while (value != 0) {
+        digits--;
+        buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));
+        value /= 10;
+    }
+    
+    return string(buffer);
+}
 }
